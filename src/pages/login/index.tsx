@@ -6,6 +6,7 @@ import { useAuthentication } from '../../context/authenticationContext'
 import CreateUserModal from '../../components/modalUser'
 import { LoginContainer, LoginCard, StyledLink } from './styles'
 import { toast } from 'react-toastify'
+import { IUser } from '../../interfaces/iUser'
 
 
 const Login = () => {
@@ -16,14 +17,17 @@ const Login = () => {
     const [openCreateModal, setOpenCreateModal] = useState(false)
 
     const handleLogin = () => {
-        const user = JSON.parse(localStorage.getItem('user') || '')
+        const user: IUser[] = JSON.parse(localStorage.getItem('user') || '[]')
 
         if (!user) {
             toast.error("Usuário não encontrado!")
             return
         }
 
-        if (user.email === email && bcrypt.compareSync(password, user.password)) {
+        const userExists = user.find((e: IUser) => e.email === email)
+        console.log(userExists)
+
+        if (userExists && bcrypt.compareSync(password, userExists.password)) {
             setIsAuthentication(true)
             navigate('/')
         } else {
