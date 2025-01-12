@@ -24,7 +24,6 @@ const Login = () => {
         }
 
         if (user.email === email && bcrypt.compareSync(password, user.password)) {
-            toast.success('Usuário criado com sucesso!')
             setIsAuthentication(true)
             navigate('/')
         } else {

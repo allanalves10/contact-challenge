@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Button, Modal, TextField, Box } from '@mui/material'
 import bcrypt from 'bcryptjs'
+import { toast } from 'react-toastify'
+import { IUser } from '../../interfaces/iUser'
 
 interface ICreateUserModalProps {
     open: boolean
@@ -15,7 +17,14 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
 
     const handleCreateUser = () => {
         if (password !== confirmPassword) {
-            alert("As senhas não coincidem!")
+            toast.error("As senhas não coincidem!")
+            return
+        }
+
+        const listUser: IUser[] = JSON.parse(localStorage.getItem('user') || '[]')
+
+        if (listUser && listUser?.find((e: IUser) => e.email === email)) {
+            toast.error("Email já cadastrado!")
             return
         }
 
@@ -27,7 +36,11 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
             password: hashedPassword,
         }
 
-        localStorage.setItem('user', JSON.stringify(user))
+        const updateListUser = [...listUser, user]
+
+        localStorage.setItem('user', JSON.stringify(updateListUser))
+
+        toast.success('Usuário cadastrado com sucesso!')
 
         handleClose()
     }
