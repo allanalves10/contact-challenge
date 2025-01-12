@@ -40,6 +40,11 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
 
         localStorage.setItem('user', JSON.stringify(updateListUser))
 
+        setEmail('')
+        setName('')
+        setPassword('')
+        setConfirmPassword('')
+
         toast.success('Usuário cadastrado com sucesso!')
 
         handleClose()
