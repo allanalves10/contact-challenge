@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import LogoutIcon from '@mui/icons-material/Logout';
+import styled from 'styled-components'
+import LogoutIcon from '@mui/icons-material/Logout'
 
 export const Header = styled.header`
     background-color: var(--blue-600);
