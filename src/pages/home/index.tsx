@@ -4,11 +4,12 @@ import api from '../../lib/axios'
 import { IContact } from '../../interfaces/iContact'
 import { toast } from 'react-toastify'
 import { useAuthentication } from '../../context/authenticationContext'
+import MapComponent from '../../components/map'
 
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
   const [openDialog, setOpenDialog] = useState(false)
-  const [selectedContactId, setSelectedContactId] = useState<string | null>(null)
+  const [selectedContact, setSelectedContact] = useState<IContact | null>(null)
   const [newContact, setNewContact] = useState<IContact>({
     address: {
       cep: '',
@@ -98,15 +99,24 @@ const Home = () => {
     setOpenDialog(false)
   }
 
-  const handleSelectContact = (id: string) => {
-    setSelectedContactId((prev) => (prev === id ? null : id))
+  const handleSelectContact = (contact: IContact) => {
+    if (selectedContact?.id === contact.id) {
+      setSelectedContact(null)
+      return
+    }
+
+    if (!contact.address.location.coordinates.latitude || !contact.address.location.coordinates.longitude) {
+      toast.error('Contato não possui coordenadas de sua localização.')
+    }
+
+    setSelectedContact(contact)
   }
 
-  const handleDeleteContact = (id: string) => {
-    const updatedContacts = contacts.filter((contact) => contact.id !== id)
+  const handleDeleteContact = (contact: IContact) => {
+    const updatedContacts = contacts.filter((contactItem) => contactItem.id !== contact.id)
     setContacts(updatedContacts)
     localStorage.setItem('contacts', JSON.stringify(updatedContacts))
-    if (selectedContactId === id) setSelectedContactId(null)
+    if (selectedContact?.id === contact.id) setSelectedContact(null)
     toast.success('Contato excluído com sucesso!')
   }
 
@@ -131,8 +141,8 @@ const Home = () => {
             position="relative"
           >
             <Checkbox
-              checked={selectedContactId === contact.id}
-              onChange={() => handleSelectContact(contact.id)}
+              checked={selectedContact?.id === contact.id}
+              onChange={() => handleSelectContact(contact)}
               sx={{ position: 'absolute', top: 8, right: 8 }}
             />
             <Typography variant="h6">{contact.name}</Typography>
@@ -143,7 +153,7 @@ const Home = () => {
               variant="outlined"
               color="error"
               size="small"
-              onClick={() => handleDeleteContact(contact.id)}
+              onClick={() => handleDeleteContact(contact)}
               sx={{ marginTop: 2 }}
             >
               Excluir
@@ -151,6 +161,11 @@ const Home = () => {
           </Box>
         ))}
       </Box>
+
+      <MapComponent 
+        lat={Number(selectedContact?.address.location.coordinates.latitude)}
+        lng={Number(selectedContact?.address.location.coordinates.longitude)}
+      />
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
         <DialogTitle>Adicionar Contato</DialogTitle>

@@ -1,5 +1,5 @@
 export interface IContact {
-    id: string;
+    id: string
     address: IAddress
     cpf: string
     name: string
