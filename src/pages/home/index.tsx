@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { useAuthentication } from '../../context/authenticationContext'
 import MapComponent from '../../components/map'
 import { validateCPF } from '../../utils/functions'
+import { Container, ListContactsContainer, MapContainer } from './styles'
 
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
@@ -138,44 +139,51 @@ const Home = () => {
       <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
         Adicionar Contato
       </Button>
-      <Box marginTop={3}>
-        {!!contacts.length && contacts.map((contact, index) => (
-          <Box
-            key={index}
-            padding={2}
-            marginBottom={2}
-            border="1px solid #ddd"
-            borderRadius="8px"
-            display="flex"
-            flexDirection="column"
-            position="relative"
-          >
-            <Checkbox
-              checked={selectedContact?.id === contact.id}
-              onChange={() => handleSelectContact(contact)}
-              sx={{ position: 'absolute', top: 8, right: 8 }}
-            />
-            <Typography variant="h6">{contact.name}</Typography>
-            <Typography>CPF: {contact.cpf}</Typography>
-            <Typography>Telefone: {contact.phone}</Typography>
-            <Typography>Endereço: {`${contact.address.street}, ${contact.address.number}, ${contact.address.neighborhood}, ${contact.address.city} - ${contact.address.state}`}</Typography>
-            <Button
-              variant="outlined"
-              color="error"
-              size="small"
-              onClick={() => handleDeleteContact(contact)}
-              sx={{ marginTop: 2 }}
-            >
-              Excluir
-            </Button>
-          </Box>
-        ))}
-      </Box>
 
-      <MapComponent 
-        lat={Number(selectedContact?.address.location.coordinates.latitude)}
-        lng={Number(selectedContact?.address.location.coordinates.longitude)}
-      />
+      <Container>
+        <ListContactsContainer>
+          <Box>
+            {!!contacts.length && contacts.map((contact, index) => (
+              <Box
+                key={index}
+                padding={2}
+                marginBottom={2}
+                border="1px solid #ddd"
+                borderRadius="8px"
+                display="flex"
+                flexDirection="column"
+                position="relative"
+              >
+                <Checkbox
+                  checked={selectedContact?.id === contact.id}
+                  onChange={() => handleSelectContact(contact)}
+                  sx={{ position: 'absolute', top: 8, right: 8 }}
+                />
+                <Typography variant="h6">{contact.name}</Typography>
+                <Typography>CPF: {contact.cpf}</Typography>
+                <Typography>Telefone: {contact.phone}</Typography>
+                <Typography>Endereço: {`${contact.address.street}, ${contact.address.number}, ${contact.address.neighborhood}, ${contact.address.city} - ${contact.address.state}`}</Typography>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  onClick={() => handleDeleteContact(contact)}
+                  sx={{ marginTop: 2 }}
+                >
+                  Excluir
+                </Button>
+              </Box>
+            ))}
+          </Box>
+        </ListContactsContainer>
+        
+        <MapContainer>
+          <MapComponent 
+            lat={Number(selectedContact?.address.location.coordinates.latitude)}
+            lng={Number(selectedContact?.address.location.coordinates.longitude)}
+          />
+        </MapContainer>
+      </Container>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
         <DialogTitle>Adicionar Contato</DialogTitle>

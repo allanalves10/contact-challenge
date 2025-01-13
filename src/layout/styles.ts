@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import LogoutIcon from '@mui/icons-material/Logout'
+import { Link } from 'react-router-dom';
 
 export const Header = styled.header`
     background-color: var(--blue-600);
@@ -44,4 +45,9 @@ export const LogoutWrapper = styled.div`
 
 export const StyledLogoutIcon = styled(LogoutIcon)`
     cursor: pointer;
+`;
+
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 `;

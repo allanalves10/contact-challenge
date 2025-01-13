@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import bcrypt from 'bcryptjs'
-import { Content, Header, HeaderContainer, LayoutWrapper, LogoWrapper, LogoutWrapper, StyledLogoutIcon } from './styles'
+import { Content, Header, HeaderContainer, LayoutWrapper, LogoWrapper, LogoutWrapper, StyledLink, StyledLogoutIcon } from './styles'
 import logo from '../assets/logo.png'
 import { useAuthentication } from '../context/authenticationContext'
 import { Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Typography } from '@mui/material'
@@ -59,9 +59,9 @@ const Layout = () => {
             <Header>
                 <HeaderContainer>
                 <LogoWrapper>
-                    <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <img src={logo} alt="logo uex" />
-                    </Link>
+                    <StyledLink to="/">
+                        <img src={logo} alt="logo uex" />
+                    </StyledLink>
                 </LogoWrapper>
 
                 <LogoutWrapper>

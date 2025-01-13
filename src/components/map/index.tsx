@@ -22,7 +22,6 @@ const MapComponent = ({lat, lng}: IMapComponentProps) => {
     }
 
     return (
-        <div style={{ height: "100vh", width: "100%" }}>
         <GoogleMapReact
             yesIWantToUseGoogleMapApiInternals
             bootstrapURLKeys={{
@@ -37,7 +36,6 @@ const MapComponent = ({lat, lng}: IMapComponentProps) => {
                 <StyledPlaceIcon />
             </StyledMarker>
         </GoogleMapReact>
-        </div>
     )
 }
 
