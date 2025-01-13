@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import GoogleMapReact from "google-map-react"
 import { StyledMarker, StyledPlaceIcon } from "./styles"
-import { KEY_GOOGLE_MAPS } from "../../config/environment"
+import { GOOGLE_MAPS_LANGUAGE, KEY_GOOGLE_MAPS } from "../../config/environment"
 
 interface IMapComponentProps {
     lat: number
@@ -16,8 +16,6 @@ const MapComponent = ({lat, lng}: IMapComponentProps) => {
         lng,
     }
 
-    const mapRef = useRef<any>(null)
-
     const createMapOptions = {
         zoomControl: false,
         scrollwheel: false,
@@ -27,10 +25,10 @@ const MapComponent = ({lat, lng}: IMapComponentProps) => {
     return (
         <div style={{ height: "100vh", width: "100%" }}>
         <GoogleMapReact
-            ref={mapRef}
             yesIWantToUseGoogleMapApiInternals
             bootstrapURLKeys={{
                 key: KEY_GOOGLE_MAPS,
+                language: GOOGLE_MAPS_LANGUAGE
             }}
             center={center}
             zoom={5}

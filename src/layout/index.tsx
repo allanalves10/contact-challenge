@@ -5,7 +5,12 @@ import logo from '../assets/logo.png'
 import { useAuthentication } from '../context/authenticationContext'
 
 const Layout = () => {
-    const { setIsAuthentication } = useAuthentication()
+    const { handleAuthentication, handleUser } = useAuthentication()
+
+    const handleLogout = () => {
+        handleAuthentication(false)
+        handleUser(undefined)
+    }
 
     return (
         <LayoutWrapper>
@@ -18,7 +23,7 @@ const Layout = () => {
                 </LogoWrapper>
 
                 <LogoutWrapper>
-                    <StyledLogoutIcon onClick={() => setIsAuthentication(false)} />
+                    <StyledLogoutIcon onClick={handleLogout} />
                 </LogoutWrapper>
             </HeaderContainer>
         </Header>

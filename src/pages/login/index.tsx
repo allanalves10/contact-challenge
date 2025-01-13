@@ -11,7 +11,7 @@ import { IUser } from '../../interfaces/iUser'
 
 const Login = () => {
     const navigate = useNavigate()
-    const { setIsAuthentication, setUser } = useAuthentication()
+    const { handleAuthentication, handleUser } = useAuthentication()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [openCreateModal, setOpenCreateModal] = useState(false)
@@ -27,8 +27,8 @@ const Login = () => {
         const userExists = user.find((e: IUser) => e.email === email)
 
         if (userExists && bcrypt.compareSync(password, userExists.password)) {
-            setIsAuthentication(true)
-            setUser(userExists)
+            handleAuthentication(true)
+            handleUser(userExists)
             navigate('/')
         } else {
             toast.error("Email ou senha inválidos!")
