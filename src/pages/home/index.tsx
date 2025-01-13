@@ -7,6 +7,7 @@ import { useAuthentication } from '../../context/authenticationContext'
 import MapComponent from '../../components/map'
 import { validateCPF } from '../../utils/functions'
 import { Container, ListContactsContainer, MapContainer } from './styles'
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
@@ -29,6 +30,9 @@ const Home = () => {
     userId: '',
   })
   const { user } = useAuthentication()
+
+  const [filter, setFilter] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     const storedContacts = localStorage.getItem('contacts')
@@ -131,6 +135,22 @@ const Home = () => {
     toast.success('Contato excluído com sucesso!')
   }
 
+  const filteredContacts = contacts
+    .filter((contact) => 
+      contact.name.toLowerCase().includes(filter.toLowerCase()) ||
+      contact.cpf.includes(filter)
+    )
+    .sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+
+      if (sortOrder === 'asc') {
+        return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+      } else {
+        return nameA > nameB ? -1 : nameA < nameB ? 1 : 0;
+      }
+    });
+
   return (
     <Box padding={3}>
       <Typography variant="h4" gutterBottom>
@@ -140,10 +160,30 @@ const Home = () => {
         Adicionar Contato
       </Button>
 
+      <Box display="flex" maxWidth="50%" alignItems="center" marginBottom={2}>
+        <TextField
+          label="Filtrar por Nome ou CPF"
+          fullWidth
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          margin="normal"
+        />
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            sx={{ marginLeft: 2 }}
+          >
+            Ordenar ({sortOrder === 'asc' ? 'Decrescente' : 'Crescente'})
+          </Button>
+        </Box>
+      </Box>
+
       <Container>
         <ListContactsContainer>
           <Box>
-            {!!contacts.length && contacts.map((contact, index) => (
+            {!!filteredContacts.length && filteredContacts.map((contact, index) => (
               <Box
                 key={index}
                 padding={2}
@@ -200,7 +240,6 @@ const Home = () => {
             fullWidth
             margin="normal"
             value={newContact.cpf}
-
             onChange={(e) => {
               const rawValue = e.target.value.replace(/[^0-9]/g, "")
               let formattedValue = rawValue
@@ -283,7 +322,7 @@ const Home = () => {
             Cancelar
           </Button>
           <Button onClick={handleAddContact} color="primary">
-            Salvar
+            Adicionar
           </Button>
         </DialogActions>
       </Dialog>
