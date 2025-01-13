@@ -181,6 +181,7 @@ const Home = () => {
             variant="contained"
             color="primary"
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            disabled={!filteredContacts.length}
             sx={{ marginLeft: 2 }}
           >
             Ordenar ({sortOrder === 'asc' ? 'Decrescente' : 'Crescente'})
