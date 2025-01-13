@@ -191,7 +191,7 @@ const Home = () => {
       <Container>
         <ListContactsContainer>
           <Box>
-            {!!filteredContacts.length && filteredContacts.map((contact, index) => (
+            {!!filteredContacts.length ? filteredContacts.map((contact, index) => (
               <Box
                 key={index}
                 padding={2}
@@ -221,7 +221,8 @@ const Home = () => {
                   Excluir
                 </Button>
               </Box>
-            ))}
+            )) : <Typography variant="h6">Sem Contatos Encontrados</Typography>
+          }
           </Box>
         </ListContactsContainer>
         
