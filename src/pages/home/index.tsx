@@ -5,6 +5,7 @@ import { IContact } from '../../interfaces/iContact'
 import { toast } from 'react-toastify'
 import { useAuthentication } from '../../context/authenticationContext'
 import MapComponent from '../../components/map'
+import { validateCPF } from '../../utils/functions'
 
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
@@ -72,12 +73,19 @@ const Home = () => {
   }
 
   const handleAddContact = () => {
-    if (contacts.find((contact) => contact.cpf === newContact.cpf)) {
+    if (!validateCPF(newContact.cpf)) {
+      toast.error("CPF inválido! Não é possível adicionar o contato.")
+      return
+    }
+
+    const documentCurrentContact = newContact.cpf.replace(/[^0-9]/g, "")
+
+    if (contacts.find((contact) => contact.cpf === documentCurrentContact)) {
       toast.error('Já existe um contato cadastrado com este CPF!')
       return
     }
 
-    const updateListContacts = [...contacts, { ...newContact, id: crypto.randomUUID(), userId: user?.id || '' }]
+    const updateListContacts = [...contacts, { ...newContact, id: crypto.randomUUID(), userId: user?.id || '', cpf: documentCurrentContact }]
     setContacts(updateListContacts)
     localStorage.setItem('contacts', JSON.stringify(updateListContacts))
     setNewContact({
@@ -96,6 +104,8 @@ const Home = () => {
       phone: '',
       userId: '',
     })
+
+    toast.success('Contato adicionado com sucesso!')
     setOpenDialog(false)
   }
 
@@ -182,8 +192,34 @@ const Home = () => {
             fullWidth
             margin="normal"
             value={newContact.cpf}
-            onChange={(e) => setNewContact({ ...newContact, cpf: e.target.value })}
+
+            onChange={(e) => {
+              const rawValue = e.target.value.replace(/[^0-9]/g, "")
+              let formattedValue = rawValue
+          
+              if (rawValue.length > 3) {
+                formattedValue = `${rawValue.slice(0, 3)}.${rawValue.slice(3)}`
+              }
+              if (rawValue.length > 6) {
+                formattedValue = `${formattedValue.slice(0, 7)}.${rawValue.slice(6)}`
+              }
+              if (rawValue.length > 9) {
+                formattedValue = `${formattedValue.slice(0, 11)}-${rawValue.slice(9)}`
+              }
+          
+              if (rawValue.length <= 11) {
+                setNewContact({ ...newContact, cpf: formattedValue })
+              }
+            }}
+            inputProps={{
+              maxLength: 14,
+            }}
           />
+          {!validateCPF(newContact.cpf) && newContact.cpf !== "" && (
+            <Typography color="error" variant="caption">
+              CPF inválido
+            </Typography>
+          )}
           <TextField
             label="Telefone"
             fullWidth
