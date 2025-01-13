@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button, TextField, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Box } from '@mui/material'
+import { Button, TextField, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Box, Checkbox } from '@mui/material'
 import api from '../../lib/axios'
 import { IContact } from '../../interfaces/iContact'
 import { toast } from 'react-toastify'
@@ -8,6 +8,7 @@ import { useAuthentication } from '../../context/authenticationContext'
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
   const [openDialog, setOpenDialog] = useState(false)
+  const [selectedContactId, setSelectedContactId] = useState<string | null>(null)
   const [newContact, setNewContact] = useState<IContact>({
     address: {
       cep: '',
@@ -18,6 +19,7 @@ const Home = () => {
       state: '',
       street: '',
     },
+    id: '',
     cpf: '',
     name: '',
     phone: '',
@@ -74,7 +76,7 @@ const Home = () => {
       return
     }
 
-    const updateListContacts = [...contacts, {...newContact, userId: user?.userId || ''}]
+    const updateListContacts = [...contacts, { ...newContact, id: crypto.randomUUID(), userId: user?.id || '' }]
     setContacts(updateListContacts)
     localStorage.setItem('contacts', JSON.stringify(updateListContacts))
     setNewContact({
@@ -87,12 +89,25 @@ const Home = () => {
         state: '',
         street: '',
       },
+      id: '',
       cpf: '',
       name: '',
       phone: '',
       userId: '',
     })
     setOpenDialog(false)
+  }
+
+  const handleSelectContact = (id: string) => {
+    setSelectedContactId((prev) => (prev === id ? null : id))
+  }
+
+  const handleDeleteContact = (id: string) => {
+    const updatedContacts = contacts.filter((contact) => contact.id !== id)
+    setContacts(updatedContacts)
+    localStorage.setItem('contacts', JSON.stringify(updatedContacts))
+    if (selectedContactId === id) setSelectedContactId(null)
+    toast.success('Contato excluído com sucesso!')
   }
 
   return (
@@ -113,11 +128,26 @@ const Home = () => {
             borderRadius="8px"
             display="flex"
             flexDirection="column"
+            position="relative"
           >
+            <Checkbox
+              checked={selectedContactId === contact.id}
+              onChange={() => handleSelectContact(contact.id)}
+              sx={{ position: 'absolute', top: 8, right: 8 }}
+            />
             <Typography variant="h6">{contact.name}</Typography>
             <Typography>CPF: {contact.cpf}</Typography>
             <Typography>Telefone: {contact.phone}</Typography>
             <Typography>Endereço: {`${contact.address.street}, ${contact.address.number}, ${contact.address.neighborhood}, ${contact.address.city} - ${contact.address.state}`}</Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              size="small"
+              onClick={() => handleDeleteContact(contact.id)}
+              sx={{ marginTop: 2 }}
+            >
+              Excluir
+            </Button>
           </Box>
         ))}
       </Box>

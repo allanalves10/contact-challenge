@@ -1,4 +1,5 @@
 export interface IContact {
+    id: string;
     address: IAddress
     cpf: string
     name: string

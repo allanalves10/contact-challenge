@@ -32,7 +32,7 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
         const hashedPassword = bcrypt.hashSync(password, 10)
 
         const user = {
-            userId,
+            id: userId,
             name,
             email,
             password: hashedPassword,
