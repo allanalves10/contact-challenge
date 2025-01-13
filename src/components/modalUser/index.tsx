@@ -1,8 +1,10 @@
-import { useState } from 'react'
 import { Button, Modal, TextField, Box } from '@mui/material'
 import bcrypt from 'bcryptjs'
 import { toast } from 'react-toastify'
 import { IUser } from '../../interfaces/iUser'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { UserFormData, userSchema } from '../../schemas/userSchema'
 
 interface ICreateUserModalProps {
     open: boolean
@@ -10,21 +12,21 @@ interface ICreateUserModalProps {
 }
 
 const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const userId = crypto.randomUUID()
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<UserFormData>({
+        resolver: zodResolver(userSchema),
+    })
 
-    const handleCreateUser = () => {
-        if (password !== confirmPassword) {
-            toast.error("As senhas não coincidem!")
-            return
-        }
+    const handleCreateUser = (data: UserFormData) => {
+        const { name, email, password } = data
 
         const listUser: IUser[] = JSON.parse(localStorage.getItem('user') || '[]')
 
-        if (listUser && listUser?.find((e: IUser) => e.email === email)) {
+        if (listUser?.find((e: IUser) => e.email === email)) {
             toast.error("Email já cadastrado!")
             return
         }
@@ -32,23 +34,17 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
         const hashedPassword = bcrypt.hashSync(password, 10)
 
         const user = {
-            id: userId,
+            id: crypto.randomUUID(),
             name,
             email,
             password: hashedPassword,
         }
 
         const updateListUser = [...listUser, user]
-
         localStorage.setItem('user', JSON.stringify(updateListUser))
 
-        setEmail('')
-        setName('')
-        setPassword('')
-        setConfirmPassword('')
-
         toast.success('Usuário cadastrado com sucesso!')
-
+        reset()
         handleClose()
     }
 
@@ -56,37 +52,43 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
         <Modal open={open} onClose={handleClose}>
             <Box sx={{ ...modalStyle }}>
                 <h2>Cadastrar Usuário</h2>
-                <TextField
-                    label="Nome"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Senha"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    label="Confirmar Senha"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                />
-                <Button variant="contained" onClick={handleCreateUser}>Cadastrar</Button>
+                <form onSubmit={handleSubmit(handleCreateUser)}>
+                    <TextField
+                        label="Nome"
+                        fullWidth
+                        margin="normal"
+                        {...register('name')}
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                    />
+                    <TextField
+                        label="Email"
+                        fullWidth
+                        margin="normal"
+                        {...register('email')}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                    />
+                    <TextField
+                        label="Senha"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        {...register('password')}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                    />
+                    <TextField
+                        label="Confirmar Senha"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        {...register('confirmPassword')}
+                        error={!!errors.confirmPassword}
+                        helperText={errors.confirmPassword?.message}
+                    />
+                    <Button variant="contained" type="submit">Cadastrar</Button>
+                </form>
             </Box>
         </Modal>
     )
