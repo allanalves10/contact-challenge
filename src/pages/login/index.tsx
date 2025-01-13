@@ -17,14 +17,9 @@ const Login = () => {
     const [openCreateModal, setOpenCreateModal] = useState(false)
 
     const handleLogin = () => {
-        const user: IUser[] = JSON.parse(localStorage.getItem('user') || '[]')
+        const listUser: IUser[] = JSON.parse(localStorage.getItem('user') || '[]')
 
-        if (!user) {
-            toast.error("Usuário não encontrado!")
-            return
-        }
-
-        const userExists = user.find((e: IUser) => e.email === email)
+        const userExists = listUser.find((e: IUser) => e.email === email)
 
         if (userExists && bcrypt.compareSync(password, userExists.password)) {
             handleAuthentication(true)
