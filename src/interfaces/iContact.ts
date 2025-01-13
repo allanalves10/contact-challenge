@@ -3,6 +3,7 @@ export interface IContact {
     cpf: string
     name: string
     phone: string
+    userId: string
 }
 
 interface IAddress {

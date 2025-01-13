@@ -14,6 +14,7 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const userId = crypto.randomUUID()
 
     const handleCreateUser = () => {
         if (password !== confirmPassword) {
@@ -31,6 +32,7 @@ const CreateUserModal = ({ open, handleClose }: ICreateUserModalProps) => {
         const hashedPassword = bcrypt.hashSync(password, 10)
 
         const user = {
+            userId,
             name,
             email,
             password: hashedPassword,

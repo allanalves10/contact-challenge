@@ -3,6 +3,7 @@ import { Button, TextField, Typography, Dialog, DialogActions, DialogContent, Di
 import api from '../../lib/axios'
 import { IContact } from '../../interfaces/iContact'
 import { toast } from 'react-toastify'
+import { useAuthentication } from '../../context/authenticationContext'
 
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
@@ -20,11 +21,13 @@ const Home = () => {
     cpf: '',
     name: '',
     phone: '',
+    userId: '',
   })
+  const { user } = useAuthentication()
 
   useEffect(() => {
     const storedContacts = localStorage.getItem('contacts')
-    console.log(storedContacts)
+
     if (storedContacts) {
       setContacts(JSON.parse(storedContacts))
     }
@@ -71,7 +74,7 @@ const Home = () => {
       return
     }
 
-    const updateListContacts = [...contacts, newContact]
+    const updateListContacts = [...contacts, {...newContact, userId: user?.userId || ''}]
     setContacts(updateListContacts)
     localStorage.setItem('contacts', JSON.stringify(updateListContacts))
     setNewContact({
@@ -87,6 +90,7 @@ const Home = () => {
       cpf: '',
       name: '',
       phone: '',
+      userId: '',
     })
     setOpenDialog(false)
   }
