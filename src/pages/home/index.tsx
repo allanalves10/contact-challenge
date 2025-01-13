@@ -7,7 +7,6 @@ import { useAuthentication } from '../../context/authenticationContext'
 import MapComponent from '../../components/map'
 import { validateCPF } from '../../utils/functions'
 import { Container, ListContactsContainer, MapContainer } from './styles'
-import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 
 const Home = () => {
   const [contacts, setContacts] = useState<IContact[]>([])
@@ -77,22 +76,7 @@ const Home = () => {
     }
   }
 
-  const handleAddContact = () => {
-    if (!validateCPF(newContact.cpf)) {
-      toast.error("CPF inválido! Não é possível adicionar o contato.")
-      return
-    }
-
-    const documentCurrentContact = newContact.cpf.replace(/[^0-9]/g, "")
-
-    if (contacts.find((contact) => contact.cpf === documentCurrentContact)) {
-      toast.error('Já existe um contato cadastrado com este CPF!')
-      return
-    }
-
-    const updateListContacts = [...contacts, { ...newContact, id: crypto.randomUUID(), userId: user?.id || '', cpf: documentCurrentContact }]
-    setContacts(updateListContacts)
-    localStorage.setItem('contacts', JSON.stringify(updateListContacts))
+  const resetForm = () => {
     setNewContact({
       address: {
         cep: '',
@@ -109,6 +93,25 @@ const Home = () => {
       phone: '',
       userId: '',
     })
+  }
+
+  const handleAddContact = () => {
+    if (!validateCPF(newContact.cpf)) {
+      toast.error("CPF inválido! Não é possível adicionar o contato.")
+      return
+    }
+
+    const documentCurrentContact = newContact.cpf.replace(/[^0-9]/g, "")
+
+    if (contacts.find((contact) => contact.cpf === documentCurrentContact)) {
+      toast.error('Já existe um contato cadastrado com este CPF!')
+      return
+    }
+
+    const updateListContacts = [...contacts, { ...newContact, id: crypto.randomUUID(), userId: user?.id || '', cpf: documentCurrentContact }]
+    setContacts(updateListContacts)
+    localStorage.setItem('contacts', JSON.stringify(updateListContacts))
+    resetForm()
 
     toast.success('Contato adicionado com sucesso!')
     setOpenDialog(false)
@@ -133,6 +136,11 @@ const Home = () => {
     localStorage.setItem('contacts', JSON.stringify(updatedContacts))
     if (selectedContact?.id === contact.id) setSelectedContact(null)
     toast.success('Contato excluído com sucesso!')
+  }
+
+  const handleCancelContact = () => {
+    resetForm()
+    setOpenDialog(false)
   }
 
   const filteredContacts = contacts
@@ -272,14 +280,17 @@ const Home = () => {
             fullWidth
             margin="normal"
             value={newContact.phone}
-            onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
+            onChange={(e) => setNewContact({ ...newContact, phone: e.target.value.replace(/[^0-9]/g, "") })}
           />
           <TextField
             label="CEP"
             fullWidth
             margin="normal"
             value={newContact.address.cep}
-            onChange={(e) => handleCepChange(e.target.value)}
+            onChange={(e) => handleCepChange(e.target.value.replace(/[^0-9]/g, ""))}
+            inputProps={{
+              maxLength: 8,
+            }}
           />
           <TextField
             label="Estado"
@@ -289,17 +300,17 @@ const Home = () => {
             disabled
           />
           <TextField
-            label="Bairro"
-            fullWidth
-            margin="normal"
-            value={newContact.address.neighborhood}
-            disabled
-          />
-          <TextField
             label="Cidade"
             fullWidth
             margin="normal"
             value={newContact.address.city}
+            disabled
+          />
+          <TextField
+            label="Bairro"
+            fullWidth
+            margin="normal"
+            value={newContact.address.neighborhood}
             disabled
           />
           <TextField
@@ -318,10 +329,10 @@ const Home = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="secondary">
+          <Button onClick={handleCancelContact} color="error">
             Cancelar
           </Button>
-          <Button onClick={handleAddContact} color="primary">
+          <Button onClick={handleAddContact} color="success">
             Adicionar
           </Button>
         </DialogActions>
