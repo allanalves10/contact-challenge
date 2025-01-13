@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { TextField, Button, Typography } from '@mui/material'
+import { TextField, Button } from '@mui/material'
 import bcrypt from 'bcryptjs'
 import { useNavigate } from 'react-router-dom'
 import { useAuthentication } from '../../context/authenticationContext'
 import CreateUserModal from '../../components/modalUser'
-import { LoginContainer, LoginCard, StyledLink } from './styles'
+import { LoginContainer, LoginCard, StyledLink, StyledTypography } from './styles'
 import { toast } from 'react-toastify'
 import { IUser } from '../../interfaces/iUser'
 
@@ -55,10 +55,10 @@ const Login = () => {
                     margin="normal"
                 />
                 <Button variant="contained" onClick={handleLogin}>Entrar</Button>
-                <Typography variant="body2">
+                <StyledTypography variant="body2">
                     <span>Você ainda não tem uma conta? </span>
                     <StyledLink onClick={() => setOpenCreateModal(true)}>Cadastre-se</StyledLink>
-                </Typography>
+                </StyledTypography>
             </LoginCard>
 
             <CreateUserModal open={openCreateModal} handleClose={() => setOpenCreateModal(false)} />

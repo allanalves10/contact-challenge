@@ -1,4 +1,3 @@
-import { useRef } from "react"
 import GoogleMapReact from "google-map-react"
 import { StyledMarker, StyledPlaceIcon } from "./styles"
 import { GOOGLE_MAPS_LANGUAGE, KEY_GOOGLE_MAPS } from "../../config/environment"

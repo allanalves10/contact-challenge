@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 export const LoginContainer = styled.div`
     display: flex;
@@ -29,6 +29,13 @@ export const LoginCard = styled(Box)`
     button {
         margin-top: 10px;
     }
+`;
+
+export const StyledTypography = styled(Typography)`
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgba(0, 0, 0, 0.87);
+    padding-top: 1rem;
 `;
 
 export const StyledLink = styled.a`
